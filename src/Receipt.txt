@@ -1,0 +1,19 @@
+                Name of Company
+                    Address
+
+Date:
+Customer's Name:
+Order:
+
+--------------------------------------------
+Total no. Of Items:             Subtotal:
+Less:
+    Discount:
+
+                                Total:
+--------------------------------------------
+Salesperson:
+
+---------------------------------------------
+
+                    ***        
