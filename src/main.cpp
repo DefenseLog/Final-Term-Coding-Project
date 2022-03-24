@@ -18,8 +18,7 @@ enum Size_of_Container{oz8, oz16, oz32};
 // }sales;
 //vector<Sales> company_sales;
 
-double price_total = 0;
-int total_orders = 0;
+
 int number_of_container_sizes = 3;
 
 void Inputs(string&,string&,string&,Box[]);
@@ -30,9 +29,11 @@ void Order(int, Box[]);
 int main(){
     string name_of_customer, name_of_salesperson, date;
     Box container_size[number_of_container_sizes];
+    double price_total = 0;
+    int total_orders = 0;
 
     Inputs(name_of_customer, name_of_salesperson, date, container_size);
-    Processes();
+    Processes(container_size, price_total, total_orders);
     Output();
     return 0;
 }
