@@ -1,16 +1,26 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stdio.h>
+#include <map>
 
 using namespace std;
 
 
 enum Size_of_Container{oz8, oz16, oz32};
+enum discount_promo{promo1, promo2, promo3};
+const int number_of_container_sizes = 3;
+
+map<int, double> discount_rate {
+    {promo1, 0.02 },
+    {promo2, 0.05 },
+    {promo3, 0.1 }
+};
 
 struct Box{
-    int no_of_orders = 0;
-    double price_per_box = 0;
-    double total_price_per_size = 0;
+    unsigned int no_of_orders = 0;
+    long double price_per_box = 0;
+    long double total_price_per_size = 0;
 };
 
 
@@ -18,15 +28,15 @@ struct Sales{
     string name_of_salesperson;
     string name_of_customer;
     string date;
-    Box container_size[3];
-    double price_total;
-    double discount;
-    int total_orders;
+    Box container_size[number_of_container_sizes];
+    long double price_total = 0;
+    long double discount = 0;
+    unsigned int total_orders = 0;
 };
 
 vector<Sales> company_sales;
 
-const int number_of_container_sizes = 3;
+
 
 void Inputs(Sales&);
 void Processes(Sales&);
@@ -37,14 +47,13 @@ int main(){
     fstream receipt; string receipt_template = "Receipt.txt";
     Sales order_sale;
     
-    Box container_size[number_of_container_sizes];
-
+    system("cls");
     Inputs(order_sale);
     Processes(order_sale);
     Output(receipt,receipt_template,order_sale);
     return 0;
 }
-
+      
 void Inputs(Sales &sale){
     bool isFail = false;
 
@@ -99,7 +108,6 @@ void Inputs(Sales &sale){
 }
 
 void Processes(Sales &sale){
-
     for(int i = 0; i < number_of_container_sizes; i++){
         sale.container_size[i].total_price_per_size = sale.container_size[i].no_of_orders * sale.container_size[i].price_per_box;
     }
@@ -110,11 +118,11 @@ void Processes(Sales &sale){
     }
 
     if(sale.total_orders <= 15 && sale.total_orders >= 10){
-        sale.discount = sale.price_total * 0.02;
+        sale.discount = sale.price_total * discount_rate[promo1];
     }else if (16 <= sale.total_orders && sale.total_orders <= 20){
-        sale.discount = sale.price_total * 0.05;
+        sale.discount = sale.price_total * discount_rate[promo2];
     }else if(20 < sale.total_orders){
-        sale.discount = sale.price_total * 0.1;
+        sale.discount = sale.price_total * discount_rate[promo3];
     }
 }
 
@@ -130,16 +138,56 @@ void Output(fstream &receipt, string receipt_template, Sales& sale){
             if(lines == "Date:"){
                 cout << ' ' <<sale.date; 
             }
-            else if(lines == "Customer's Name:"){
+            if(lines == "Customer's Name:"){
                 cout << ' ' << sale.name_of_customer;
             }
-            else if(lines == "Orders:"){
+            if(lines == "Orders:"){
                 for(int i = 0; i < number_of_container_sizes; i++){
-                    cout <<"\n\t" << sale.container_size[i].no_of_orders << "\tx\t"
-                    << sale.container_size[i].price_per_box << "\t....." << sale.container_size[i].total_price_per_size;
+                    cout << "\n\t";
+                    if(sale.container_size[i].no_of_orders != 0){
+                         switch (i)
+                        {
+                        case oz8:
+                            cout << "8 oz:";
+                            break;
+                        
+                        case oz16:
+                            cout << "16 oz:";
+                            break;
+
+                        case oz32:
+                            cout << "32 oz:";
+                            break;
+                        
+                        default:
+                            break;
+                        }
+                        cout <<"\t" << sale.container_size[i].no_of_orders << " x "
+                        << sale.container_size[i].price_per_box << "\t.....\t" << sale.container_size[i].total_price_per_size;
+                    }
                 }
             }
-            else if(lines == "Salesperson:"){
+            if(lines == "Total no. Of Items:"){
+                cout << " " << sale.total_orders;
+            }
+            if(lines.find("Subtotal:") != string::npos){
+                cout << "\t" << sale.price_total;
+            }
+            if(lines.find("Discount:") != string::npos){
+                cout << "\n\t";
+                if(sale.total_orders <= 15 && sale.total_orders >= 10){
+                    cout << sale.price_total << "\tx\t" << discount_rate[promo1] << "\t.....\t" << sale.discount;
+                }else if (16 <= sale.total_orders && sale.total_orders <= 20){
+                    cout << sale.price_total << "\tx\t" << discount_rate[promo2] << "\t.....\t" << sale.discount;
+                }else if(20 < sale.total_orders){
+                    cout << sale.price_total << "\tx\t" << discount_rate[promo3] << "\t.....\t" << sale.discount;
+                }
+                
+            }
+            if(lines.find("Total:") != string::npos){
+                cout << "\t" << sale.price_total - sale.discount;
+            }
+            if(lines == "Salesperson:"){
                 cout << ' ' << sale.name_of_salesperson;
             }
             cout << endl;

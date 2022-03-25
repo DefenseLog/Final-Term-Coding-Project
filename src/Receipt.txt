@@ -1,19 +1,20 @@
-                Name of Company
-                    Address
+                    Name of Company
+                        Address
 
 Date:
 Customer's Name:
-Orders:
 
---------------------------------------------
-Total no. Of Items:             Subtotal:
+Orders:
+------------------------------------------------
+Total no. Of Items:
+                        Subtotal:
 Less:
     Discount:
 
-                                Total:
---------------------------------------------
+                           Total:
+------------------------------------------------
 Salesperson:
 
----------------------------------------------
+------------------------------------------------
 
-                    ***        
+                        ***        
