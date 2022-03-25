@@ -34,10 +34,6 @@ struct Sales{
     unsigned int total_orders = 0;
 };
 
-vector<Sales> company_sales;
-
-
-
 void Inputs(Sales&);
 void Processes(Sales&);
 void Output(fstream&,string, Sales&);
@@ -45,12 +41,30 @@ void Order(int, Box[]);
 
 int main(){
     fstream receipt; string receipt_template = "Receipt.txt";
-    Sales order_sale;
-    
-    system("cls");
-    Inputs(order_sale);
-    Processes(order_sale);
-    Output(receipt,receipt_template,order_sale);
+    bool exit = false;
+    char exit_character;
+    do{
+        Sales order_sale;
+        system("cls");
+        Inputs(order_sale);
+        Processes(order_sale);
+        Output(receipt,receipt_template,order_sale);
+        cout << "\n\n";
+        do{
+            cin.clear();
+            cin.ignore(1000,'\n');
+            cout << "Press enter to reset and x to exit: ";
+            cin.get(exit_character);
+        }while(!(exit_character == 10 || exit_character == 'x'));
+
+        if(exit_character == 'x'){
+                exit = true;
+        }
+        else if (exit_character == 10){
+            exit = false;
+        } 
+
+    }while(!exit);
     return 0;
 }
       
@@ -129,6 +143,7 @@ void Processes(Sales &sale){
 void Output(fstream &receipt, string receipt_template, Sales& sale){
     string lines;
     receipt.open(receipt_template,ios::in);
+    cout << "\n\n";
     if(!receipt){
         cout << "Receipt Template could not be found. Please contact the system administrator.";
     }
@@ -193,7 +208,8 @@ void Output(fstream &receipt, string receipt_template, Sales& sale){
             cout << endl;
         }
     }
-};
+    receipt.close();
+}
 
 void Order(int i, Box container[]){
     int no_of_orders; double price_per_box; bool isFail;
