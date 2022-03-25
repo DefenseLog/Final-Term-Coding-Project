@@ -20,6 +20,8 @@ struct Sales{
     string date;
     Box container_size[3];
     double price_total;
+    double discount;
+    int total_orders;
 };
 
 vector<Sales> company_sales;
@@ -27,7 +29,7 @@ vector<Sales> company_sales;
 const int number_of_container_sizes = 3;
 
 void Inputs(Sales&);
-void Processes(Box[], double, int);
+void Processes(Sales&);
 void Output(fstream&,string, Sales&);
 void Order(int, Box[]);
 
@@ -36,11 +38,9 @@ int main(){
     Sales order_sale;
     
     Box container_size[number_of_container_sizes];
-    double price_total = 0;
-    int total_orders = 0;
 
     Inputs(order_sale);
-    Processes(container_size, price_total, total_orders);
+    Processes(order_sale);
     Output(receipt,receipt_template,order_sale);
     return 0;
 }
@@ -78,21 +78,45 @@ void Inputs(Sales &sale){
             default:
                 break;
         }
-        cout << "Press + to add another order or enter to proceed.";
-        cin.clear();
-        cin.ignore(1000,'\n');
-        cin.get(addOrder);
+        
+        
+        do{
+            cout << "Press + to add another order or enter to proceed: ";
+            cin.clear();
+            cin.ignore(1000,'\n');
+            cin.get(addOrder);
+        }while(!(addOrder == 10 || addOrder == '+')); 
+    
     }while(addOrder == '+');
 
     cout << "Customer's Name: ";
-    cin >> sale.name_of_customer;
+    getline(cin, sale.name_of_customer);
     cout << "Date: ";
     cin >> sale.date;
+    cin.ignore();
     cout << "Salesperson: ";
-    cin >> sale.name_of_salesperson;
+    getline(cin, sale.name_of_salesperson);
 }
 
-void Processes(Box container[], double price_total, int total_orders){};
+void Processes(Sales &sale){
+
+    for(int i = 0; i < number_of_container_sizes; i++){
+        sale.container_size[i].total_price_per_size = sale.container_size[i].no_of_orders * sale.container_size[i].price_per_box;
+    }
+
+    for(int i = 0; i < number_of_container_sizes; i++){
+        sale.price_total += sale.container_size[i].total_price_per_size;
+        sale.total_orders += sale.container_size[i].no_of_orders;
+    }
+
+    if(sale.total_orders <= 15 && sale.total_orders >= 10){
+        sale.discount = sale.price_total * 0.02;
+    }else if (16 <= sale.total_orders && sale.total_orders <= 20){
+        sale.discount = sale.price_total * 0.05;
+    }else if(20 < sale.total_orders){
+        sale.discount = sale.price_total * 0.1;
+    }
+}
 
 void Output(fstream &receipt, string receipt_template, Sales& sale){
     string lines;
@@ -108,6 +132,15 @@ void Output(fstream &receipt, string receipt_template, Sales& sale){
             }
             else if(lines == "Customer's Name:"){
                 cout << ' ' << sale.name_of_customer;
+            }
+            else if(lines == "Orders:"){
+                for(int i = 0; i < number_of_container_sizes; i++){
+                    cout <<"\n\t" << sale.container_size[i].no_of_orders << "\tx\t"
+                    << sale.container_size[i].price_per_box << "\t....." << sale.container_size[i].total_price_per_size;
+                }
+            }
+            else if(lines == "Salesperson:"){
+                cout << ' ' << sale.name_of_salesperson;
             }
             cout << endl;
         }

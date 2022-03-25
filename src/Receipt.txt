@@ -3,7 +3,7 @@
 
 Date:
 Customer's Name:
-Order:
+Orders:
 
 --------------------------------------------
 Total no. Of Items:             Subtotal:
